@@ -1,73 +1,87 @@
-# React + TypeScript + Vite
+# Exemplo de Testes com Vitest
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto de exemplo para a disciplina **Programação Web 2 (IFPB)**, demonstrando testes de componentes React com [Vitest](https://vitest.dev/) e [Testing Library](https://testing-library.com/).
 
-Currently, two official plugins are available:
+## Tecnologias
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vitejs.dev/) como bundler
+- [Vitest](https://vitest.dev/) como test runner
+- [Testing Library](https://testing-library.com/docs/react-testing-library/intro/) para renderização e queries
+- [jsdom](https://github.com/jsdom/jsdom) como ambiente de testes
 
-## React Compiler
+## Estrutura do projeto
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── components/
+│   ├── Button.tsx        # Botão reutilizável com variantes (primary, secondary, danger)
+│   ├── LoginForm.tsx     # Formulário de login com chamada à API
+│   ├── UserCard.tsx      # Card de exibição de usuário
+│   └── UserList.tsx      # Lista de usuários com fetch assíncrono
+├── services/
+│   ├── authService.ts    # Serviço de autenticação (login)
+│   └── userService.ts    # Serviço de usuários (fetchUsers, fetchUserById)
+├── types/
+│   └── index.ts          # Tipos: User, AuthUser, LoginCredentials
+└── __tests__/
+    ├── basic/
+    │   └── Button.test.tsx          # Testes básicos: render, queries, eventos
+    └── mock-spy/
+        ├── LoginForm.test.tsx       # Mock do fetch global com vi.spyOn
+        ├── UserCard.test.tsx        # Mock de componente filho com vi.mock
+        └── UserList.test.tsx        # Mock de módulo de serviço com vi.mock
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Instalação
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
+
+## Scripts disponíveis
+
+| Script | Descrição |
+|---|---|
+| `npm run dev` | Inicia o servidor de desenvolvimento |
+| `npm test` | Executa os testes em modo watch |
+| `npm run build` | Compila o projeto para produção |
+| `npm run lint` | Executa o ESLint |
+| `npm run preview` | Pré-visualiza o build de produção |
+
+## Executando os testes
+
+```bash
+# Modo watch (reexecuta ao salvar arquivos)
+npm test
+
+# Execução única (sem watch)
+npx vitest run
+
+# Com relatório de cobertura
+npx vitest run --coverage
+```
+
+## Conceitos demonstrados nos testes
+
+### `basic/Button.test.tsx` — Testes básicos de componente
+- Renderização com `render()` e queries (`getByRole`, `getByText`)
+- Simulação de eventos com `fireEvent`
+- Verificação de atributos, classes CSS e acessibilidade (`aria-disabled`)
+
+### `mock-spy/LoginForm.test.tsx` — Mock do `fetch` global
+- Interceptação do `fetch` com `vi.spyOn(globalThis, 'fetch')`
+- Simulação de respostas de sucesso e erro (`mockReturnValue`, `mockImplementation`)
+- Interação assíncrona com `userEvent` e `waitFor`
+- Verificação dos dados enviados na requisição (URL e corpo)
+
+### `mock-spy/UserCard.test.tsx` — Mock de componente filho
+- Substituição de dependências com `vi.mock()`
+- Isolamento do componente testado em relação aos seus filhos
+- Uso de `data-testid` em mocks para facilitar as assertions
+
+### `mock-spy/UserList.test.tsx` — Mock de módulo de serviço
+- Mock de módulo inteiro com `vi.mock()` + `vi.mocked()`
+- Simulação de estados: carregando, sucesso, lista vazia e erro
+- Queries assíncronas com `findBy*` e `waitFor`
+- Garantia de número de chamadas com `toHaveBeenCalledTimes`
