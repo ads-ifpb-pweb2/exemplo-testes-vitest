@@ -1,0 +1,27 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`6D - Snapshot Testing > mantém a estrutura do Badge inalterada 1`] = `
+<span
+  aria-label="Notificações: 5"
+  class="badge"
+>
+  Notificações
+   
+  <strong>
+    5
+  </strong>
+</span>
+`;
+
+exports[`6D - Snapshot Testing > snapshot de Badge com count zerado 1`] = `
+<span
+  aria-label="Mensagens: 0"
+  class="badge"
+>
+  Mensagens
+   
+  <strong>
+    0
+  </strong>
+</span>
+`;
